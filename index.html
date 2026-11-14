@@ -79,6 +79,12 @@ h1 .one { display: block; }
 .marquee span { font-family: var(--display); font-weight: 800; font-size: 20px; letter-spacing: .04em; text-transform: uppercase; padding: 9px 0; white-space: nowrap; }
 @keyframes slide { to { transform: translateX(-50%); } }
 
+/* ---------- Surf ---------- */
+.surf { margin: 0; }
+.surf canvas { display: block; width: 100%; aspect-ratio: 21 / 9; border-radius: 14px; background: #ffb06a; }
+.surf figcaption { margin-top: 10px; font-size: 14px; color: var(--mist); }
+@media (max-width: 560px) { .surf canvas { aspect-ratio: 4 / 3; } }
+
 /* ---------- Odds ---------- */
 .odds { display: grid; grid-template-columns: 1fr 1.25fr; gap: 36px; align-items: center; }
 @media (max-width: 760px) { .odds { grid-template-columns: 1fr; gap: 22px; } }
@@ -154,12 +160,20 @@ textarea { min-height: 76px; resize: vertical; }
 .btn.quiet { background: var(--ink); color: var(--paper); padding: 11px 20px; font-size: 15px; }
 .error { color: var(--glow); font-size: 15px; margin: 0; }
 
-.reply { background: var(--paper); color: var(--ink); border-radius: 14px; padding: 22px 24px; margin-top: 6px; }
-.reply h3 { font-family: var(--display); font-weight: 800; font-size: 24px; margin: 0 0 6px; letter-spacing: -.01em; }
-.reply p { margin: 0 0 12px; font-size: 15px; }
-.reply blockquote { margin: 0 0 14px; padding: 14px 16px; background: #fff; border-radius: 10px; font-size: 16px; white-space: pre-wrap; overflow-wrap: anywhere; border-left: 4px solid var(--flare); }
-.reply .row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-.reply .status { font-size: 14px; font-weight: 600; }
+.rsvp.done { grid-template-columns: minmax(0, 640px); }
+.reply { background: var(--paper); color: var(--ink); border-radius: 16px; overflow: hidden; box-shadow: 0 18px 40px rgba(2,30,38,.45); }
+.reply-top { background: var(--flare); padding: 16px 26px; display: flex; align-items: center; gap: 12px; font-weight: 600; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; }
+.reply-top svg { flex: none; }
+.reply-body { padding: 26px 26px 28px; }
+.reply h3 { font-family: var(--display); font-weight: 800; font-size: clamp(32px, 6vw, 44px); line-height: 1; letter-spacing: -.025em; margin: 0 0 10px; }
+.rsvp-intro .reply p { color: var(--ink); margin: 0; font-size: 17px; max-width: none; }
+.reply .where { margin: 22px 0 0; padding-top: 20px; border-top: 2px dashed rgba(11,42,51,.28); }
+.reply .label { font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; opacity: .62; margin: 0 0 6px; }
+.reply .addr { font-family: var(--display); font-weight: 800; font-size: clamp(24px, 4.6vw, 32px); line-height: 1.1; letter-spacing: -.02em; overflow-wrap: anywhere; }
+.reply .addr small { display: block; font-family: var(--body); font-weight: 500; font-size: 16px; letter-spacing: 0; margin-top: 6px; }
+.reply .row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+.reply .row a { display: inline-block; text-decoration: none; font-weight: 600; font-size: 15px; padding: 11px 20px; border-radius: 999px; background: var(--ink); color: var(--paper); }
+.reply .row a.ghost { background: transparent; color: var(--ink); box-shadow: inset 0 0 0 1.5px var(--ink); }
 [hidden] { display: none !important; }
 
 footer { padding: 64px 0 48px; color: var(--mist); font-size: 15px; }
@@ -208,6 +222,14 @@ footer strong { color: var(--paper); }
   </div>
   <p class="countdown" id="countdown">Friday 27 November 2026, 6 pm Sydney time.</p>
 
+  <section aria-labelledby="surf-h">
+    <h2 id="surf-h">Meanwhile, at the beach</h2>
+    <figure class="surf">
+      <canvas id="surf" role="img" aria-label="Animated illustration of two cartoon surfers, labelled Tanya and Amber, riding a wave at sunset"></canvas>
+      <figcaption>Artist's impression of the birthday pair. Actual surfing ability may vary.</figcaption>
+    </figure>
+  </section>
+
   <section aria-labelledby="odds-h">
     <div class="odds">
       <div>
@@ -247,14 +269,26 @@ footer strong { color: var(--paper); }
 
   <section aria-labelledby="rsvp-h">
     <h2 id="rsvp-h">RSVP</h2>
-    <div class="rsvp">
+    <div class="rsvp" id="rsvp">
       <div class="rsvp-intro">
         <p id="rsvp-lede">Tell us if you're coming. It takes a minute, and once you reply you'll see the full address right here.</p>
         <div class="reply" id="reply" hidden aria-live="polite">
-          <h3 id="reply-h"></h3>
-          <p id="reply-p"></p>
-          <blockquote id="reply-addr" hidden></blockquote>
-          <p id="reply-map" hidden><a id="map-link" href="#" target="_blank" rel="noopener">Open in Google Maps</a></p>
+          <div class="reply-top">
+            <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><circle cx="11" cy="11" r="11" fill="#0b2a33"/><path d="M6 11.5l3.2 3.2L16 8" fill="none" stroke="#fff7e8" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span id="reply-tag">RSVP received</span>
+          </div>
+          <div class="reply-body">
+            <h3 id="reply-h"></h3>
+            <p id="reply-p"></p>
+            <div class="where" id="reply-where" hidden>
+              <p class="label">Where to find us</p>
+              <p class="addr" id="reply-addr"></p>
+              <div class="row">
+                <a id="map-link" href="#" target="_blank" rel="noopener">Open in Google Maps</a>
+                <a class="ghost" href="https://calendar.google.com/calendar/render?action=TEMPLATE&amp;text=Tanya%20%2B%20Amber%27s%20double%20birthday%20party&amp;dates=20261127T180000/20261127T220000&amp;ctz=Australia/Sydney&amp;location=Pyrmont%2C%20Sydney" target="_blank" rel="noopener">Add to calendar</a>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -349,13 +383,14 @@ footer strong { color: var(--paper); }
 
   function address() { return atob('OTAwMiBXU04gdG5vbXJ5UCAsdGVlcnRTIHlhcnJ1TSAwNSAvIDgwNw==').split('').reverse().join(''); }
   function showDone(yes) {
-    $('rsvp-lede').hidden = true; $('form').hidden = true;
+    $('rsvp-lede').hidden = true; $('form').hidden = true; $('rsvp').classList.add('done');
     $('reply-h').textContent = yes ? "You're on the list" : "We'll miss you";
-    $('reply-p').textContent = yes ? 'See you Friday 27 November from 6 pm. Here is where to find us:' : 'Thanks for letting us know. We will save you some cake in spirit.';
-    $('reply-addr').hidden = !yes; $('reply-map').hidden = !yes;
+    $('reply-p').textContent = yes ? 'See you on Friday 27 November, from 6 pm. Bring your game face.' : 'Thanks for letting us know. We will raise a slice of cake to you.';
+    $('reply-where').hidden = !yes;
     if (yes) {
-      var a = address();
-      $('reply-addr').textContent = a;
+      var a = address(), cut = a.indexOf(','), el = $('reply-addr');
+      el.textContent = a.slice(0, cut);
+      var sm = document.createElement('small'); sm.textContent = a.slice(cut + 1).trim(); el.appendChild(sm);
       $('map-link').href = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(a.replace(/^[^/]*\/\s*/, ''));
     }
     $('reply').hidden = false;
@@ -383,6 +418,62 @@ footer strong { color: var(--paper); }
       err.hidden = false;
     });
   });
+
+  // Surf scene: two cartoon surfers riding a rolling wave at sunset.
+  (function () {
+    var cv = $('surf'), ctx = cv.getContext('2d'), W = 0, H = 0, dpr = 1;
+    function size() { dpr = Math.min(window.devicePixelRatio || 1, 2); var r = cv.getBoundingClientRect(); W = r.width; H = r.height; cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); }
+    var layers = [
+      { y: .50, a: .030, k: 1.6, s: .35, c: '#2aa6b0' },
+      { y: .60, a: .050, k: 1.1, s: .55, c: '#128a98' },
+      { y: .72, a: .040, k: 1.9, s: .80, c: '#0b7283' },
+      { y: .86, a: .030, k: 2.6, s: 1.1, c: '#065466' }
+    ];
+    function wy(L, x, t) { var u = x / W * Math.PI * 2; return H * (L.y + L.a * Math.sin(u * L.k + t * L.s) + L.a * .4 * Math.sin(u * L.k * 2.3 - t * L.s * 1.4)); }
+    function surfer(x, t, sc, shirt, hair, name) {
+      var L = layers[1], y = wy(L, x, t), slope = Math.atan2(wy(L, x + 6, t) - wy(L, x - 6, t), 12);
+      ctx.save(); ctx.translate(x, y - 2 * sc); ctx.rotate(slope * .8); ctx.scale(sc, sc);
+      ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+      ctx.fillStyle = 'rgba(255,247,232,.75)'; ctx.beginPath(); ctx.ellipse(-30, 4, 26, 5, 0, 0, 7); ctx.fill();          // spray
+      ctx.fillStyle = '#fff7e8'; ctx.beginPath(); ctx.ellipse(0, 0, 46, 6, 0, 0, 7); ctx.fill();                       // board
+      ctx.fillStyle = '#ff6a45'; ctx.fillRect(-6, -5.5, 12, 11);
+      ctx.strokeStyle = '#f1e3c6'; ctx.lineWidth = 8;                                                                  // legs
+      ctx.beginPath(); ctx.moveTo(-14, -4); ctx.lineTo(-7, -17); ctx.lineTo(-2, -26); ctx.moveTo(13, -4); ctx.lineTo(8, -16); ctx.lineTo(2, -26); ctx.stroke();
+      ctx.strokeStyle = shirt; ctx.lineWidth = 13; ctx.beginPath(); ctx.moveTo(0, -27); ctx.lineTo(5, -46); ctx.stroke(); // torso
+      var sw = Math.sin(t * 2 + x) * 4;
+      ctx.strokeStyle = '#b97a56'; ctx.lineWidth = 5;                                                                  // arms
+      ctx.beginPath(); ctx.moveTo(3, -43); ctx.lineTo(-18, -38 + sw); ctx.moveTo(7, -44); ctx.lineTo(27, -50 - sw); ctx.stroke();
+      ctx.fillStyle = '#b97a56'; ctx.beginPath(); ctx.arc(8, -58, 8, 0, 7); ctx.fill();                                // head
+      ctx.fillStyle = '#1c1512'; hair(sw);
+      ctx.restore();
+      ctx.font = '800 ' + Math.round(15 * sc + 3) + 'px "Bricolage Grotesque", sans-serif'; ctx.textAlign = 'center';
+      ctx.fillStyle = '#0b2a33'; ctx.fillText(name, x + 6 * sc, y - 84 * sc);
+    }
+    function curls(sw) { [[4,-65,6],[-1,-61,6],[-5,-55,6],[-8,-49 + sw * .3,5],[10,-66,5],[-11,-58 + sw * .3,5]].forEach(function (c) { ctx.beginPath(); ctx.arc(c[0], c[1], c[2], 0, 7); ctx.fill(); }); }
+    function shortHair() { ctx.beginPath(); ctx.arc(7, -61, 8.5, Math.PI * .95, Math.PI * 1.95); ctx.fill(); ctx.beginPath(); ctx.arc(10, -54, 6.5, 0, Math.PI); ctx.fill(); }
+    function draw(t) {
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      var g = ctx.createLinearGradient(0, 0, 0, H * .62); g.addColorStop(0, '#ff8a5c'); g.addColorStop(.55, '#ffc070'); g.addColorStop(1, '#ffe2a0');
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+      ctx.fillStyle = '#fff3c4'; ctx.beginPath(); ctx.arc(W * .74, H * .40, Math.min(W, H) * .16, 0, 7); ctx.fill();
+      var sc = Math.max(.55, Math.min(1.25, W / 760));
+      layers.forEach(function (L, i) {
+        ctx.fillStyle = L.c; ctx.beginPath(); ctx.moveTo(0, H);
+        for (var x = 0; x <= W + 8; x += 8) ctx.lineTo(x, wy(L, x, t));
+        ctx.lineTo(W, H); ctx.closePath(); ctx.fill();
+        if (i === 1) {
+          ctx.strokeStyle = 'rgba(255,247,232,.6)'; ctx.lineWidth = 3; ctx.beginPath();
+          for (var x2 = 0; x2 <= W + 8; x2 += 8) { var yy = wy(L, x2, t) + 1; x2 ? ctx.lineTo(x2, yy) : ctx.moveTo(x2, yy); } ctx.stroke();
+          surfer(W * (.30 + .05 * Math.sin(t * .31)), t, sc, '#7f9363', shortHair, 'Amber');
+          surfer(W * (.58 + .05 * Math.sin(t * .27 + 2)), t, sc, '#ffffff', curls, 'Tanya');
+        }
+      });
+    }
+    size(); draw(1.2);
+    window.addEventListener('resize', function () { size(); draw(performance.now() / 1000); });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { draw(1.2); });
+    if (!reduce) (function loop(ms) { draw(ms / 1000); requestAnimationFrame(loop); })(1200);
+  })();
 
   // One small celebration when someone says yes.
   function burst() {
