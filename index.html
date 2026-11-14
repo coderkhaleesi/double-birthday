@@ -147,7 +147,7 @@ textarea { min-height: 76px; resize: vertical; }
 .stepper { display: inline-flex; align-items: center; gap: 14px; }
 .stepper button { width: 42px; height: 42px; border-radius: 50%; border: 1.5px solid rgba(185,226,227,.4); background: transparent; color: var(--paper); font: inherit; font-size: 22px; line-height: 1; cursor: pointer; }
 .stepper output { font-family: var(--display); font-weight: 800; font-size: 30px; min-width: 1.2em; text-align: center; font-variant-numeric: tabular-nums; }
-.btn { font: inherit; font-weight: 600; font-size: 17px; cursor: pointer; border: 0; border-radius: 999px; padding: 15px 26px; background: var(--flare); color: var(--ink); justify-self: start; }
+.btn { display: inline-block; text-decoration: none; font: inherit; font-weight: 600; font-size: 17px; cursor: pointer; border: 0; border-radius: 999px; padding: 15px 26px; background: var(--flare); color: var(--ink); justify-self: start; }
 .btn:hover { filter: brightness(1.08); }
 .btn.quiet { background: var(--ink); color: var(--paper); padding: 11px 20px; font-size: 15px; }
 .error { color: var(--glow); font-size: 15px; margin: 0; }
@@ -201,7 +201,7 @@ footer strong { color: var(--paper); }
     <div>
       <p class="label">Where</p>
       <p class="big">Our place, Pyrmont</p>
-      <p class="small">Sydney. We'll send you the full address when you RSVP.</p>
+      <p class="small">Sydney. You'll get the full address when you RSVP.</p>
     </div>
   </div>
   <p class="countdown" id="countdown">Friday 27 November 2026, 6 pm Sydney time.</p>
@@ -224,7 +224,7 @@ footer strong { color: var(--paper); }
     <h2 id="plan-h">The plan</h2>
     <div class="cols">
       <div><h3>Come from 6</h3><p>It's a house party, so arrive when you can from 6 pm on Friday evening.</p></div>
-      <div><h3>Our place in Pyrmont</h3><p>The party is at our apartment. RSVP below and we'll reply with the full address.</p></div>
+      <div><h3>Our place in Pyrmont</h3><p>The party is at our apartment. RSVP below and you'll see the full address.</p></div>
       <div><h3>Board games</h3><p>There'll be board games on the table. Bring a favourite if you have one, and your competitive side.</p></div>
       <div><h3>Tell us you're coming</h3><p>Reply below so we know how many to expect, and mention anything you don't eat.</p></div>
     </div>
@@ -245,52 +245,14 @@ footer strong { color: var(--paper); }
 
   <section aria-labelledby="rsvp-h">
     <h2 id="rsvp-h">RSVP</h2>
-    <div class="rsvp">
-      <div class="rsvp-intro">
-        <p>Fill this in and we'll write your reply for you. Copy it and send it to Tanya or Amber the same way this invite reached you, and we'll reply with the address.</p>
-        <div class="reply" id="reply" hidden aria-live="polite">
-          <h3 id="reply-h">Your reply is ready</h3>
-          <p>This page can't send it for you. Copy the message and send it to Tanya or Amber, and we'll reply with the address.</p>
-          <blockquote id="reply-text"></blockquote>
-          <div class="row">
-            <button type="button" class="btn quiet" id="copy">Copy message</button>
-            <span class="status" id="copy-status"></span>
-          </div>
-        </div>
-      </div>
-
-      <form id="form" novalidate>
-        <div>
-          <label for="guest-name">Your name</label>
-          <input type="text" id="guest-name" autocomplete="name" placeholder="First and last name">
-        </div>
-        <fieldset>
-          <legend>Can you make it?</legend>
-          <div class="choice">
-            <label><input type="radio" name="coming" id="coming-yes" value="yes" checked><span>Yes, I'll be there</span></label>
-            <label><input type="radio" name="coming" id="coming-no" value="no"><span>Sorry, can't come</span></label>
-          </div>
-        </fieldset>
-        <div id="count-field">
-          <label id="count-label" for="count-out">How many of you, including yourself?</label>
-          <div class="stepper">
-            <button type="button" id="minus" aria-label="One fewer person">−</button>
-            <output id="count-out" aria-labelledby="count-label">1</output>
-            <button type="button" id="plus" aria-label="One more person">+</button>
-          </div>
-        </div>
-        <div>
-          <label for="note">Anything we should know? (optional)</label>
-          <textarea id="note" placeholder="Food you don't eat, arriving late, a message for Tanya and Amber"></textarea>
-        </div>
-        <p class="error" id="error" hidden>Add your name so we know who the reply is from.</p>
-        <button type="submit" class="btn">Write my RSVP</button>
-      </form>
+    <div class="rsvp-intro">
+      <p>Tell us if you're coming with our short form. It takes about a minute, and once you submit it you'll see the full address.</p>
+      <p><a class="btn" href="https://docs.google.com/forms/d/e/1FAIpQLSdCjQnK5WhQfJ6JtLn7Gv4GmIhqENIZrkARL1jd9JiM98ed9A/viewform" target="_blank" rel="noopener">RSVP on our form</a></p>
     </div>
   </section>
 
   <footer>
-    <p><strong>Friday 27 November 2026 · 6 pm</strong><br>Pyrmont, Sydney. Full address sent when you RSVP.</p>
+    <p><strong>Friday 27 November 2026 · 6 pm</strong><br>Pyrmont, Sydney. You'll get the full address when you RSVP.</p>
   </footer>
 </main>
 
@@ -334,56 +296,6 @@ footer strong { color: var(--paper); }
         }, 3500);
       } else { $('wish').textContent = out === 1 ? 'One down. The other one too.' : 'Tap the candles to blow them out.'; }
     });
-  });
-
-  // Form state
-  var count = 1;
-  function setCount(n) { count = Math.max(1, Math.min(10, n)); $('count-out').textContent = count; save(); }
-  $('minus').addEventListener('click', function () { setCount(count - 1); });
-  $('plus').addEventListener('click', function () { setCount(count + 1); });
-  function coming() { return $('coming-yes').checked; }
-  function syncComing() { $('count-field').hidden = !coming(); save(); }
-  $('coming-yes').addEventListener('change', syncComing);
-  $('coming-no').addEventListener('change', syncComing);
-  $('guest-name').addEventListener('input', function () { $('error').hidden = true; save(); });
-  $('note').addEventListener('input', save);
-
-  // Remember an unsent draft in this browser only.
-  function save() {
-    try { localStorage.setItem('rsvp-draft', JSON.stringify({ n: $('guest-name').value, c: coming(), k: count, t: $('note').value })); } catch (e) {}
-  }
-  try {
-    var d = JSON.parse(localStorage.getItem('rsvp-draft') || 'null');
-    if (d) {
-      $('guest-name').value = d.n || ''; $('note').value = d.t || '';
-      if (d.c === false) $('coming-no').checked = true;
-      count = Math.max(1, Math.min(10, d.k || 1)); $('count-out').textContent = count;
-      $('count-field').hidden = !coming();
-    }
-  } catch (e) {}
-
-  $('form').addEventListener('submit', function (ev) {
-    ev.preventDefault();
-    var name = $('guest-name').value.trim(), note = $('note').value.trim();
-    if (!name) { $('error').hidden = false; $('guest-name').focus(); return; }
-    var msg = 'Hi Tanya and Amber! RSVP for the birthday party on Fri 27 Nov, 6 pm.\n' + name + ': ';
-    if (coming()) msg += count === 1 ? "yes, I'll be there (just me)." : "yes, we'll be there, " + count + ' of us.';
-    else msg += "sorry, I can't make it. Happy birthday to you both!";
-    if (note) msg += '\nNote: ' + note;
-    $('reply-text').textContent = msg;
-    $('reply-h').textContent = coming() ? 'Your reply is ready' : "We'll miss you";
-    $('copy-status').textContent = '';
-    $('reply').hidden = false;
-    $('reply').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'nearest' });
-    if (coming() && !reduce) burst();
-  });
-
-  $('copy').addEventListener('click', function () {
-    var text = $('reply-text').textContent, status = $('copy-status');
-    function fail() { status.textContent = 'Copy didn\'t work here. Select the message and copy it by hand.'; }
-    try {
-      navigator.clipboard.writeText(text).then(function () { status.textContent = 'Copied. Now paste it in a message to Tanya or Amber.'; }, fail);
-    } catch (e) { fail(); }
   });
 
   // One small celebration when someone says yes.
