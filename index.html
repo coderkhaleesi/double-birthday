@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Double Birthday Party</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* Layout idea: a printed party ticket on a beach-lagoon teal, with the hosts' beach photo up top. One loud thing (the giant shared date), everything else quiet. Single theme by choice. */
+  color-scheme: dark;
+  --dusk: #065466;        /* page background, deep lagoon */
+  --dusk-deep: #043f4d;   /* wells and inputs */
+  --paper: #fff7e8;       /* ticket and primary text */
+  --ink: #0b2a33;         /* text on paper */
+  --flare: #ff6a45;       /* accent: the one loud colour */
+  --glow: #ffd166;        /* candle yellow, small details only */
+  --mist: #b9e2e3;        /* secondary text on dusk */
+  --display: "Bricolage Grotesque", "Arial Narrow", "Helvetica Neue", sans-serif;
+  --body: "Instrument Sans", "Helvetica Neue", Arial, sans-serif;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--dusk);
+  color: var(--paper);
+  font-family: var(--body);
+  font-size: 17px;
+  line-height: 1.55;
+}
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--glow); outline-offset: 3px; border-radius: 4px; }
+
+.wrap { max-width: 960px; margin: 0 auto; padding: 0 20px; }
+
+/* ---------- Hero ---------- */
+.hero { padding: 44px 0 44px; position: relative; overflow: hidden; }
+.kicker {
+  font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
+  font-size: 13px; color: var(--glow); margin: 0 0 18px;
+}
+h1 {
+  font-family: var(--display); font-weight: 800;
+  font-size: clamp(54px, 13vw, 148px); line-height: .88; letter-spacing: -.035em;
+  margin: 0; text-wrap: balance;
+}
+h1 .two { color: var(--flare); }
+h1 .one { display: block; }
+.lede { max-width: 34em; margin: 26px 0 0; font-size: 19px; color: var(--mist); }
+.lede strong { color: var(--paper); font-weight: 600; }
+
+/* candles: two, one each */
+.candles { position: absolute; right: 20px; top: 40px; display: flex; gap: 14px; }
+.candle { width: 12px; height: 74px; border-radius: 3px; position: relative;
+  background: repeating-linear-gradient(-35deg, var(--paper) 0 7px, var(--flare) 7px 14px); }
+.candle::before { content: ""; position: absolute; left: 50%; top: -24px; width: 12px; height: 20px;
+  margin-left: -6px; background: var(--glow); border-radius: 50% 50% 50% 50% / 62% 62% 38% 38%;
+  transform-origin: 50% 100%; animation: flicker 2.6s ease-in-out infinite; }
+.candle:nth-child(2) { height: 58px; align-self: flex-end; }
+.candle:nth-child(2)::before { animation-delay: -1.1s; }
+@keyframes flicker { 0%,100% { transform: scale(1) rotate(-2deg); } 40% { transform: scale(.9,1.12) rotate(3deg); } 70% { transform: scale(1.05,.94) rotate(-1deg); } }
+.candle { border: 0; padding: 0; cursor: pointer; }
+.candle.out::before { animation: none; width: 3px; height: 16px; margin-left: -1.5px; top: -20px; background: var(--mist); opacity: .55; border-radius: 2px; }
+.wish { position: absolute; right: 20px; top: 132px; margin: 0; font-size: 13px; color: var(--glow); text-align: right; max-width: 15em; }
+@media (max-width: 560px) { .wish { position: static; text-align: left; margin: -18px 0 22px; } }
+@media (max-width: 560px) { .candles { position: static; margin-bottom: 30px; padding-top: 24px; } }
+
+/* ---------- Photo ---------- */
+.photo { margin: 34px 0 0; max-width: 760px; background: var(--paper); padding: 10px 10px 0; border-radius: 6px; transform: rotate(.8deg); box-shadow: 0 18px 40px rgba(2,30,38,.45); }
+.photo img { display: block; width: 100%; max-width: 100%; height: auto; border-radius: 3px; }
+.photo figcaption { color: var(--ink); font-family: var(--display); font-weight: 500; font-size: 17px; padding: 10px 6px 12px; }
+
+/* ---------- Marquee ---------- */
+.marquee { overflow: hidden; background: var(--flare); color: var(--ink); margin: 0 0 30px; transform: rotate(-1.2deg) scale(1.02); }
+.marquee div { display: flex; width: max-content; animation: slide 26s linear infinite; }
+.marquee span { font-family: var(--display); font-weight: 800; font-size: 20px; letter-spacing: .04em; text-transform: uppercase; padding: 9px 0; white-space: nowrap; }
+@keyframes slide { to { transform: translateX(-50%); } }
+
+/* ---------- Odds ---------- */
+.odds { display: grid; grid-template-columns: 1fr 1.25fr; gap: 36px; align-items: center; }
+@media (max-width: 760px) { .odds { grid-template-columns: 1fr; gap: 22px; } }
+.odds .stat { font-family: var(--display); font-weight: 800; font-size: clamp(64px, 12vw, 120px); line-height: .9; letter-spacing: -.04em; color: var(--flare); margin: 0 0 12px; }
+.odds p { color: var(--mist); margin: 0 0 10px; max-width: 28em; }
+.year { display: grid; grid-template-columns: repeat(31, 1fr); gap: 4px; }
+.year i { aspect-ratio: 1; border-radius: 50%; background: rgba(185,226,227,.22); }
+.year i.party { background: var(--glow); }
+.year i.bday { background: var(--flare); box-shadow: 0 0 0 3px rgba(255,106,69,.3); }
+.key { display: flex; gap: 18px; flex-wrap: wrap; margin: 14px 0 0; font-size: 13px; color: var(--mist); }
+.key b { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; }
+
+/* ---------- Config ---------- */
+.config { background: var(--dusk-deep); border: 1.5px solid rgba(185,226,227,.25); border-radius: 14px; padding: 20px 22px; margin: 0; overflow-x: auto;
+  font: 500 14.5px/1.7 ui-monospace, "SF Mono", Menlo, Consolas, monospace; color: var(--paper); }
+.config .k { color: var(--glow); } .config .c { color: var(--mist); }
+
+/* ---------- Ticket ---------- */
+.ticket {
+  background: var(--paper); color: var(--ink);
+  border-radius: 14px; display: grid; grid-template-columns: 1.1fr 1fr 1.5fr;
+  position: relative;
+}
+.ticket > div { padding: 24px 26px; }
+.ticket > div + div { border-left: 2px dashed rgba(11,42,51,.28); }
+.ticket .label { font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; opacity: .62; margin: 0 0 6px; }
+.ticket .big { font-family: var(--display); font-weight: 800; font-size: 34px; line-height: 1; letter-spacing: -.02em; margin: 0; }
+.ticket .small { margin: 8px 0 0; font-size: 15px; line-height: 1.4; }
+.ticket a { font-weight: 600; text-decoration-color: var(--flare); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+@media (max-width: 720px) {
+  .ticket { grid-template-columns: 1fr; }
+  .ticket > div + div { border-left: 0; border-top: 2px dashed rgba(11,42,51,.28); }
+}
+
+.countdown { margin: 22px 0 0; color: var(--mist); font-size: 15px; font-variant-numeric: tabular-nums; }
+.countdown b { color: var(--glow); font-weight: 600; }
+
+/* ---------- Sections ---------- */
+section { padding: 56px 0 0; }
+h2 { font-family: var(--display); font-weight: 800; font-size: clamp(32px, 6vw, 52px); line-height: 1; letter-spacing: -.025em; margin: 0 0 18px; text-wrap: balance; }
+.cols { display: grid; grid-template-columns: repeat(4, 1fr); gap: 26px; }
+@media (max-width: 900px) { .cols { grid-template-columns: repeat(2, 1fr); } }
+.cols h3 { font-family: var(--display); font-weight: 500; font-size: 21px; margin: 0 0 6px; color: var(--glow); }
+.cols p { margin: 0; color: var(--mist); font-size: 16px; }
+@media (max-width: 720px) { .cols { grid-template-columns: 1fr; gap: 20px; } }
+
+/* ---------- RSVP ---------- */
+.rsvp { display: grid; grid-template-columns: 1fr 1fr; gap: 36px; align-items: start; }
+@media (max-width: 760px) { .rsvp { grid-template-columns: 1fr; } }
+.rsvp-intro p { color: var(--mist); max-width: 30em; margin: 0 0 12px; }
+form { display: grid; gap: 18px; }
+label, legend { font-weight: 600; font-size: 14px; display: block; margin-bottom: 6px; padding: 0; }
+fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+input[type=text], textarea {
+  width: 100%; font: inherit; color: var(--paper); background: var(--dusk-deep);
+  border: 1.5px solid rgba(185,226,227,.4); border-radius: 10px; padding: 12px 14px;
+}
+input[type=text]::placeholder, textarea::placeholder { color: rgba(185,226,227,.6); }
+textarea { min-height: 76px; resize: vertical; }
+.choice { display: flex; gap: 10px; flex-wrap: wrap; }
+.choice label { margin: 0; cursor: pointer; }
+.choice input { position: absolute; opacity: 0; pointer-events: none; }
+.choice span { display: inline-block; padding: 11px 18px; border-radius: 999px; border: 1.5px solid rgba(185,226,227,.4); font-weight: 600; font-size: 15px; }
+.choice input:checked + span { background: var(--paper); color: var(--ink); border-color: var(--paper); }
+.choice input:focus-visible + span { outline: 3px solid var(--glow); outline-offset: 3px; }
+.stepper { display: inline-flex; align-items: center; gap: 14px; }
+.stepper button { width: 42px; height: 42px; border-radius: 50%; border: 1.5px solid rgba(185,226,227,.4); background: transparent; color: var(--paper); font: inherit; font-size: 22px; line-height: 1; cursor: pointer; }
+.stepper output { font-family: var(--display); font-weight: 800; font-size: 30px; min-width: 1.2em; text-align: center; font-variant-numeric: tabular-nums; }
+.btn { font: inherit; font-weight: 600; font-size: 17px; cursor: pointer; border: 0; border-radius: 999px; padding: 15px 26px; background: var(--flare); color: var(--ink); justify-self: start; }
+.btn:hover { filter: brightness(1.08); }
+.btn.quiet { background: var(--ink); color: var(--paper); padding: 11px 20px; font-size: 15px; }
+.error { color: var(--glow); font-size: 15px; margin: 0; }
+
+.reply { background: var(--paper); color: var(--ink); border-radius: 14px; padding: 22px 24px; margin-top: 6px; }
+.reply h3 { font-family: var(--display); font-weight: 800; font-size: 24px; margin: 0 0 6px; letter-spacing: -.01em; }
+.reply p { margin: 0 0 12px; font-size: 15px; }
+.reply blockquote { margin: 0 0 14px; padding: 14px 16px; background: #fff; border-radius: 10px; font-size: 16px; white-space: pre-wrap; overflow-wrap: anywhere; border-left: 4px solid var(--flare); }
+.reply .row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.reply .status { font-size: 14px; font-weight: 600; }
+[hidden] { display: none !important; }
+
+footer { padding: 64px 0 48px; color: var(--mist); font-size: 15px; }
+footer strong { color: var(--paper); }
+
+#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; }
+@media (prefers-reduced-motion: reduce) { .candle::before { animation: none; } .marquee div { animation: none; } }
+</style>
+</head>
+<body>
+<canvas id="confetti" aria-hidden="true"></canvas>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="candles"><button type="button" class="candle" id="candle-1" aria-label="Blow out Tanya's candle"></button><button type="button" class="candle" id="candle-2" aria-label="Blow out Amber's candle"></button></div>
+    <p class="wish" id="wish" aria-live="polite">Tap the candles to blow them out.</p>
+    <p class="kicker">Tanya + Amber invite you · Friday 27 November</p>
+    <h1><span class="two">Two</span> birthdays.<span class="one">One party.</span></h1>
+    <p class="lede">Tanya and Amber were both born on <strong>29 November</strong>. Same day, same cake, twice the candles. We're celebrating two days early, at home in Pyrmont, and we'd love you there.</p>
+    <figure class="photo">
+      <img src="photo.jpg" alt="Amber and Tanya laughing and holding hands as they run through shallow turquoise water on a sunny beach" width="1448" height="1086">
+      <figcaption>Amber + Tanya, both turning a year older on 29 November</figcaption>
+    </figure>
+  </div>
+</header>
+
+<div class="marquee" aria-hidden="true"><div id="marquee"></div></div>
+
+<main class="wrap">
+  <div class="ticket">
+    <div>
+      <p class="label">When</p>
+      <p class="big">Fri 27 Nov</p>
+      <p class="small">2026</p>
+    </div>
+    <div>
+      <p class="label">Doors</p>
+      <p class="big">6 pm</p>
+      <p class="small"><a href="https://calendar.google.com/calendar/render?action=TEMPLATE&amp;text=Tanya%20%2B%20Amber%27s%20double%20birthday%20party&amp;dates=20261127T180000/20261127T220000&amp;ctz=Australia/Sydney&amp;location=Pyrmont%2C%20Sydney">Add to Google Calendar</a></p>
+    </div>
+    <div>
+      <p class="label">Where</p>
+      <p class="big">Our place, Pyrmont</p>
+      <p class="small">Sydney. We'll send you the full address when you RSVP.</p>
+    </div>
+  </div>
+  <p class="countdown" id="countdown">Friday 27 November 2026, 6 pm Sydney time.</p>
+
+  <section aria-labelledby="odds-h">
+    <div class="odds">
+      <div>
+        <p class="stat">1 in 365</p>
+        <h2 id="odds-h">The odds of us</h2>
+        <p>That's the chance your partner shares your exact birthday. About 0.27%. We're calling it a statistically significant reason for a party.</p>
+      </div>
+      <div>
+        <div class="year" id="year" role="img" aria-label="Every day of the year as a dot, with 27 November and 29 November highlighted"></div>
+        <p class="key"><span><b style="background:var(--glow)"></b>27 Nov, the party</span><span><b style="background:var(--flare)"></b>29 Nov, both birthdays</span></p>
+      </div>
+    </div>
+  </section>
+
+  <section aria-labelledby="plan-h">
+    <h2 id="plan-h">The plan</h2>
+    <div class="cols">
+      <div><h3>Come from 6</h3><p>It's a house party, so arrive when you can from 6 pm on Friday evening.</p></div>
+      <div><h3>Our place in Pyrmont</h3><p>The party is at our apartment. RSVP below and we'll reply with the full address.</p></div>
+      <div><h3>Board games</h3><p>There'll be board games on the table. Bring a favourite if you have one, and your competitive side.</p></div>
+      <div><h3>Tell us you're coming</h3><p>Reply below so we know how many to expect, and mention anything you don't eat.</p></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="config-h">
+    <h2 id="config-h">For the engineers</h2>
+<pre class="config"><span class="k">party</span>:
+  <span class="k">hosts</span>: [tanya, amber]
+  <span class="k">birthdays</span>: 2            <span class="c"># same day, 29 Nov</span>
+  <span class="k">starts</span>: 2026-11-27T18:00+11:00
+  <span class="k">location</span>: pyrmont           <span class="c"># full address on RSVP</span>
+  <span class="k">plan</span>: deterministic
+  <span class="k">evening</span>: probabilistic
+  <span class="k">games</span>: [board]          <span class="c"># winner gets cake first</span>
+  <span class="k">required_input</span>: your RSVP</pre>
+  </section>
+
+  <section aria-labelledby="rsvp-h">
+    <h2 id="rsvp-h">RSVP</h2>
+    <div class="rsvp">
+      <div class="rsvp-intro">
+        <p>Fill this in and we'll write your reply for you. Copy it and send it to Tanya or Amber the same way this invite reached you, and we'll reply with the address.</p>
+        <div class="reply" id="reply" hidden aria-live="polite">
+          <h3 id="reply-h">Your reply is ready</h3>
+          <p>This page can't send it for you. Copy the message and send it to Tanya or Amber, and we'll reply with the address.</p>
+          <blockquote id="reply-text"></blockquote>
+          <div class="row">
+            <button type="button" class="btn quiet" id="copy">Copy message</button>
+            <span class="status" id="copy-status"></span>
+          </div>
+        </div>
+      </div>
+
+      <form id="form" novalidate>
+        <div>
+          <label for="guest-name">Your name</label>
+          <input type="text" id="guest-name" autocomplete="name" placeholder="First and last name">
+        </div>
+        <fieldset>
+          <legend>Can you make it?</legend>
+          <div class="choice">
+            <label><input type="radio" name="coming" id="coming-yes" value="yes" checked><span>Yes, I'll be there</span></label>
+            <label><input type="radio" name="coming" id="coming-no" value="no"><span>Sorry, can't come</span></label>
+          </div>
+        </fieldset>
+        <div id="count-field">
+          <label id="count-label" for="count-out">How many of you, including yourself?</label>
+          <div class="stepper">
+            <button type="button" id="minus" aria-label="One fewer person">−</button>
+            <output id="count-out" aria-labelledby="count-label">1</output>
+            <button type="button" id="plus" aria-label="One more person">+</button>
+          </div>
+        </div>
+        <div>
+          <label for="note">Anything we should know? (optional)</label>
+          <textarea id="note" placeholder="Food you don't eat, arriving late, a message for Tanya and Amber"></textarea>
+        </div>
+        <p class="error" id="error" hidden>Add your name so we know who the reply is from.</p>
+        <button type="submit" class="btn">Write my RSVP</button>
+      </form>
+    </div>
+  </section>
+
+  <footer>
+    <p><strong>Friday 27 November 2026 · 6 pm</strong><br>Pyrmont, Sydney. Full address sent when you RSVP.</p>
+  </footer>
+</main>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Countdown to 6 pm Sydney time (AEDT, UTC+11) on 27 Nov 2026.
+  var party = Date.UTC(2026, 10, 27, 7, 0, 0);
+  function tick() {
+    var ms = party - Date.now(), el = $('countdown');
+    if (ms <= 0) {
+      el.textContent = ms > -6 * 3600e3 ? 'The party is on right now. Come over.' : 'Friday 27 November 2026, 6 pm Sydney time.';
+      return;
+    }
+    var d = Math.floor(ms / 864e5), h = Math.floor(ms % 864e5 / 36e5), m = Math.floor(ms % 36e5 / 6e4);
+    el.innerHTML = 'Starts in <b>' + d + (d === 1 ? ' day' : ' days') + ', ' + h + ' h ' + m + ' min</b> (6 pm Sydney time).';
+  }
+  tick(); setInterval(tick, 30000);
+
+  // Marquee text, doubled so the loop is seamless.
+  var line = 'Tanya + Amber \u2726 29 Nov \u00d7 2 \u2726 Fri 27 Nov \u2726 6 pm \u2726 Pyrmont \u2726 Board games \u2726 ';
+  for (var r = 0; r < 8; r++) { var sp = document.createElement('span'); sp.textContent = line + '\u00a0'; $('marquee').appendChild(sp); }
+
+  // The year as 365 dots: day 331 is 27 Nov, day 333 is 29 Nov.
+  for (var day = 1; day <= 365; day++) { var dot = document.createElement('i'); if (day === 331) dot.className = 'party'; if (day === 333) dot.className = 'bday'; $('year').appendChild(dot); }
+
+  // Candles: blow both out, they relight.
+  var relight;
+  ['candle-1', 'candle-2'].forEach(function (id) {
+    $(id).addEventListener('click', function () {
+      $(id).classList.toggle('out');
+      var out = document.querySelectorAll('.candle.out').length;
+      clearTimeout(relight);
+      if (out === 2) {
+        $('wish').textContent = 'Both out. Save the real wish for the 27th.';
+        relight = setTimeout(function () {
+          $('candle-1').classList.remove('out'); $('candle-2').classList.remove('out');
+          $('wish').textContent = 'Tap the candles to blow them out.';
+        }, 3500);
+      } else { $('wish').textContent = out === 1 ? 'One down. The other one too.' : 'Tap the candles to blow them out.'; }
+    });
+  });
+
+  // Form state
+  var count = 1;
+  function setCount(n) { count = Math.max(1, Math.min(10, n)); $('count-out').textContent = count; save(); }
+  $('minus').addEventListener('click', function () { setCount(count - 1); });
+  $('plus').addEventListener('click', function () { setCount(count + 1); });
+  function coming() { return $('coming-yes').checked; }
+  function syncComing() { $('count-field').hidden = !coming(); save(); }
+  $('coming-yes').addEventListener('change', syncComing);
+  $('coming-no').addEventListener('change', syncComing);
+  $('guest-name').addEventListener('input', function () { $('error').hidden = true; save(); });
+  $('note').addEventListener('input', save);
+
+  // Remember an unsent draft in this browser only.
+  function save() {
+    try { localStorage.setItem('rsvp-draft', JSON.stringify({ n: $('guest-name').value, c: coming(), k: count, t: $('note').value })); } catch (e) {}
+  }
+  try {
+    var d = JSON.parse(localStorage.getItem('rsvp-draft') || 'null');
+    if (d) {
+      $('guest-name').value = d.n || ''; $('note').value = d.t || '';
+      if (d.c === false) $('coming-no').checked = true;
+      count = Math.max(1, Math.min(10, d.k || 1)); $('count-out').textContent = count;
+      $('count-field').hidden = !coming();
+    }
+  } catch (e) {}
+
+  $('form').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    var name = $('guest-name').value.trim(), note = $('note').value.trim();
+    if (!name) { $('error').hidden = false; $('guest-name').focus(); return; }
+    var msg = 'Hi Tanya and Amber! RSVP for the birthday party on Fri 27 Nov, 6 pm.\n' + name + ': ';
+    if (coming()) msg += count === 1 ? "yes, I'll be there (just me)." : "yes, we'll be there, " + count + ' of us.';
+    else msg += "sorry, I can't make it. Happy birthday to you both!";
+    if (note) msg += '\nNote: ' + note;
+    $('reply-text').textContent = msg;
+    $('reply-h').textContent = coming() ? 'Your reply is ready' : "We'll miss you";
+    $('copy-status').textContent = '';
+    $('reply').hidden = false;
+    $('reply').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'nearest' });
+    if (coming() && !reduce) burst();
+  });
+
+  $('copy').addEventListener('click', function () {
+    var text = $('reply-text').textContent, status = $('copy-status');
+    function fail() { status.textContent = 'Copy didn\'t work here. Select the message and copy it by hand.'; }
+    try {
+      navigator.clipboard.writeText(text).then(function () { status.textContent = 'Copied. Now paste it in a message to Tanya or Amber.'; }, fail);
+    } catch (e) { fail(); }
+  });
+
+  // One small celebration when someone says yes.
+  function burst() {
+    var c = $('confetti'), ctx = c.getContext('2d'), dpr = window.devicePixelRatio || 1;
+    var w = c.width = innerWidth * dpr, h = c.height = innerHeight * dpr;
+    var cols = ['#ff6a45', '#ffd166', '#fff7e8', '#b9e2e3'], bits = [];
+    for (var i = 0; i < 120; i++) bits.push({
+      x: w / 2, y: h * .55, vx: (Math.random() - .5) * 22 * dpr, vy: (-Math.random() * 20 - 6) * dpr,
+      s: (5 + Math.random() * 7) * dpr, r: Math.random() * 6, vr: (Math.random() - .5) * .4, c: cols[i % 4]
+    });
+    var t0 = performance.now();
+    (function frame(t) {
+      ctx.clearRect(0, 0, w, h);
+      var life = (t - t0) / 2600;
+      if (life >= 1) return;
+      bits.forEach(function (b) {
+        b.vy += .55 * dpr; b.vx *= .985; b.x += b.vx; b.y += b.vy; b.r += b.vr;
+        ctx.save(); ctx.globalAlpha = 1 - life * life; ctx.translate(b.x, b.y); ctx.rotate(b.r);
+        ctx.fillStyle = b.c; ctx.fillRect(-b.s / 2, -b.s / 4, b.s, b.s / 2); ctx.restore();
+      });
+      requestAnimationFrame(frame);
+    })(t0);
+  }
+})();
+</script>
+</body>
+</html>
