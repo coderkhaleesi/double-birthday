@@ -149,6 +149,8 @@ textarea { min-height: 76px; resize: vertical; }
 .stepper output { font-family: var(--display); font-weight: 800; font-size: 30px; min-width: 1.2em; text-align: center; font-variant-numeric: tabular-nums; }
 .btn { display: inline-block; text-decoration: none; font: inherit; font-weight: 600; font-size: 17px; cursor: pointer; border: 0; border-radius: 999px; padding: 15px 26px; background: var(--flare); color: var(--ink); justify-self: start; }
 .btn:hover { filter: brightness(1.08); }
+.btn:disabled { opacity: .6; cursor: default; }
+.error a { color: inherit; }
 .btn.quiet { background: var(--ink); color: var(--paper); padding: 11px 20px; font-size: 15px; }
 .error { color: var(--glow); font-size: 15px; margin: 0; }
 
@@ -245,9 +247,44 @@ footer strong { color: var(--paper); }
 
   <section aria-labelledby="rsvp-h">
     <h2 id="rsvp-h">RSVP</h2>
-    <div class="rsvp-intro">
-      <p>Tell us if you're coming with our short form. It takes about a minute, and once you submit it you'll see the full address.</p>
-      <p><a class="btn" href="https://docs.google.com/forms/d/e/1FAIpQLSdCjQnK5WhQfJ6JtLn7Gv4GmIhqENIZrkARL1jd9JiM98ed9A/viewform" target="_blank" rel="noopener">RSVP on our form</a></p>
+    <div class="rsvp">
+      <div class="rsvp-intro">
+        <p id="rsvp-lede">Tell us if you're coming. It takes a minute, and once you reply you'll see the full address right here.</p>
+        <div class="reply" id="reply" hidden aria-live="polite">
+          <h3 id="reply-h"></h3>
+          <p id="reply-p"></p>
+          <blockquote id="reply-addr" hidden></blockquote>
+          <p id="reply-map" hidden><a id="map-link" href="#" target="_blank" rel="noopener">Open in Google Maps</a></p>
+        </div>
+      </div>
+
+      <form id="form" novalidate>
+        <div>
+          <label for="guest-name">Your name</label>
+          <input type="text" id="guest-name" autocomplete="name" placeholder="First and last name">
+        </div>
+        <fieldset>
+          <legend>Can you make it?</legend>
+          <div class="choice">
+            <label><input type="radio" name="coming" id="coming-yes" value="yes" checked><span>Yes, I'll be there</span></label>
+            <label><input type="radio" name="coming" id="coming-no" value="no"><span>Sorry, can't come</span></label>
+          </div>
+        </fieldset>
+        <div id="count-field">
+          <label id="count-label" for="count-out">How many of you, including yourself?</label>
+          <div class="stepper">
+            <button type="button" id="minus" aria-label="One fewer person">−</button>
+            <output id="count-out" aria-labelledby="count-label">1</output>
+            <button type="button" id="plus" aria-label="One more person">+</button>
+          </div>
+        </div>
+        <div>
+          <label for="note">Anything we should know? (optional)</label>
+          <textarea id="note" placeholder="Food you don't eat, arriving late, a message for Tanya and Amber"></textarea>
+        </div>
+        <p class="error" id="error" hidden></p>
+        <button type="submit" class="btn" id="send">Send my RSVP</button>
+      </form>
     </div>
   </section>
 
@@ -295,6 +332,55 @@ footer strong { color: var(--paper); }
           $('wish').textContent = 'Tap the candles to blow them out.';
         }, 3500);
       } else { $('wish').textContent = out === 1 ? 'One down. The other one too.' : 'Tap the candles to blow them out.'; }
+    });
+  });
+
+  // RSVP: the reply goes into Tanya's Google Form in the background.
+  var FORM = 'https://docs.google.com/forms/d/e/1FAIpQLSdCjQnK5WhQfJ6JtLn7Gv4GmIhqENIZrkARL1jd9JiM98ed9A/';
+  var count = 1;
+  function setCount(n) { count = Math.max(1, Math.min(6, n)); $('count-out').textContent = count; }
+  $('minus').addEventListener('click', function () { setCount(count - 1); });
+  $('plus').addEventListener('click', function () { setCount(count + 1); });
+  function coming() { return $('coming-yes').checked; }
+  function syncComing() { $('count-field').hidden = !coming(); }
+  $('coming-yes').addEventListener('change', syncComing);
+  $('coming-no').addEventListener('change', syncComing);
+  $('guest-name').addEventListener('input', function () { $('error').hidden = true; });
+
+  function address() { return atob('OTAwMiBXU04gdG5vbXJ5UCAsdGVlcnRTIHlhcnJ1TSAwNSAvIDgwNw==').split('').reverse().join(''); }
+  function showDone(yes) {
+    $('rsvp-lede').hidden = true; $('form').hidden = true;
+    $('reply-h').textContent = yes ? "You're on the list" : "We'll miss you";
+    $('reply-p').textContent = yes ? 'See you Friday 27 November from 6 pm. Here is where to find us:' : 'Thanks for letting us know. We will save you some cake in spirit.';
+    $('reply-addr').hidden = !yes; $('reply-map').hidden = !yes;
+    if (yes) {
+      var a = address();
+      $('reply-addr').textContent = a;
+      $('map-link').href = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(a.replace(/^[^/]*\/\s*/, ''));
+    }
+    $('reply').hidden = false;
+  }
+  try { var done = localStorage.getItem('rsvp-done'); if (done) showDone(done === 'yes'); } catch (e) {}
+
+  $('form').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    var name = $('guest-name').value.trim(), note = $('note').value.trim(), err = $('error'), btn = $('send');
+    if (!name) { err.textContent = 'Add your name so we know who the reply is from.'; err.hidden = false; $('guest-name').focus(); return; }
+    var yes = coming(), body = new URLSearchParams();
+    body.append('entry.934557194', name);
+    body.append('entry.189691080', yes ? 'Yes! I will be there!' : 'Sorry, can\u2019t come');
+    if (yes) body.append('entry.137514665', String(count));
+    if (note) body.append('entry.99602021', note);
+    btn.disabled = true; btn.textContent = 'Sending\u2026'; err.hidden = true;
+    fetch(FORM + 'formResponse', { method: 'POST', mode: 'no-cors', body: body }).then(function () {
+      try { localStorage.setItem('rsvp-done', yes ? 'yes' : 'no'); } catch (e) {}
+      showDone(yes);
+      $('reply').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'nearest' });
+      if (yes && !reduce) burst();
+    }).catch(function () {
+      btn.disabled = false; btn.textContent = 'Send my RSVP';
+      err.innerHTML = 'That didn\u2019t send. Check your connection and try again, or <a href="' + FORM + 'viewform" target="_blank" rel="noopener">reply on our Google Form</a>.';
+      err.hidden = false;
     });
   });
 
